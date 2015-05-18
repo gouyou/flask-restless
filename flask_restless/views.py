@@ -1258,13 +1258,13 @@ class API(ModelView):
                                                 relationinstid)
                 if related_value_instance is None:
                     return {_STATUS: 404}, 404
-                result = to_dict(related_value_instance, deep)
+                result = self.serialize(related_value_instance)
             else:
                 # for security purposes, don't transmit list as top-level JSON
                 if is_like_list(instance, relationname):
                     result = self._paginated(list(related_value), deep)
                 else:
-                    result = to_dict(related_value, deep)
+                    result = self.serialize(related_value, deep)
         if result is None:
             return {_STATUS: 404}, 404
         for postprocessor in self.postprocessors['GET_SINGLE']:
