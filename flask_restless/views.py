@@ -973,12 +973,7 @@ class API(ModelView):
             start = 0
             end = num_results
             total_pages = 1
-        objects = [to_dict(x, deep, exclude=self.exclude_columns,
-                           exclude_relations=self.exclude_relations,
-                           include=self.include_columns,
-                           include_relations=self.include_relations,
-                           include_methods=self.include_methods)
-                   for x in instances[start:end]]
+        objects = [self.serialize(x) for x in instances[start:end]]
         return dict(page=page_num, objects=objects, total_pages=total_pages,
                     num_results=num_results)
 
@@ -1202,11 +1197,7 @@ class API(ModelView):
             headers = dict(Link=linkstring)
         else:
             primary_key = self.primary_key or primary_key_name(result)
-            result = to_dict(result, deep, exclude=self.exclude_columns,
-                             exclude_relations=self.exclude_relations,
-                             include=self.include_columns,
-                             include_relations=self.include_relations,
-                             include_methods=self.include_methods)
+            result = self.serialize(result)
             # The URL at which a client can access the instance matching this
             # search query.
             url = '{0}/{1}'.format(request.base_url, result[primary_key])
